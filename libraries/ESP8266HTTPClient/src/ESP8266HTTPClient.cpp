@@ -279,18 +279,21 @@ void HTTPClient::setAuthorization(const char * user, const char * password)
         String auth = user;
         auth += ":";
         auth += password;
-        _base64Authorization = base64::encode(auth);
+
+        _base64Authorization += F("Authorization: Basic ");
+        _base64Authorization += base64::encode(auth);
     }
 }
 
 /**
- * set the Authorizatio for the http request
+ * set the Authorization for the http request
  * @param auth const char * base64
  */
 void HTTPClient::setAuthorization(const char * auth)
 {
     if(auth) {
-        _base64Authorization = auth;
+      _base64Authorization += F("Authorization: ");
+      _base64Authorization += auth;
     }
 }
 
@@ -688,7 +691,7 @@ String HTTPClient::getString(void)
         if(!sstring.reserve((_size + 1))) {
             DEBUG_HTTPCLIENT("[HTTP-Client][getString] not enough memory to reserve a string! need: %d\n", (_size + 1));
             return "";
-        }
+        } 
     }
 
     writeToStream(&sstring);
@@ -903,7 +906,7 @@ bool HTTPClient::sendHeader(const char * type)
 
     if(_base64Authorization.length()) {
         _base64Authorization.replace("\n", "");
-        header += F("Authorization: Basic ");
+        //header += F("Authorization: Basic ");
         header += _base64Authorization;
         header += "\r\n";
     }
